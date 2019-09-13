@@ -8,7 +8,7 @@ from threading import thread
 import google.protobuf
 import argparse
 import signal
-import basicIMIO_pb2.py
+import basicIMIO_pb2
 
 #create new socket for the server side.
 
@@ -19,7 +19,6 @@ signal.signal(signal.SIGINT, handler)
 
 #Import and parse args including nickname (alias of client) and servername (IP Address of Server)
 parser = argparse.ArgumentParser()
-parser.add_argument('-n', '--nickname', dest = 'nickname', help = 'Choose an Alias', required = True)
 parser.add_argument('-s', '--servername', dest = 'servername', help = 'What is your Servername?')
 args = parser.parse_args()
 
@@ -33,29 +32,32 @@ server.listen(100)
 client_list = []
 
 def clientthread (connections, addr):
-    connections.send("Tremelle's Chatroom")
+    connections.send("The Chatroom...")
 
     while True:
             try:
+
                 #message from client read in first 2048 bits
-                mess = connections.recv(2048)
-                message = basicIMIO_pb2.BasicIMIO()
-                nick = args.nickname
+                proto_copy = basicIMIO_pb2.BasicIMIO()
+                written = proto_copy.prwrote
+                mess = written.ParseFromString()
                 
                 if mess:
+                    nick = proto_copy.prnickname
+                    nick.ParseFromString()
+
                     MessageToPrint = "from: " + nick + mess
                     #send message to print to all clients in the dynamic client list
                     broadcast(MessageToPrint, connections)
-                    message.nickname = nick.parsetostring()
-                    message.wrote = mess.parsetostring()
+                
                 else:
                     remove(connections)
 
-def broadcast(mess, connections):
+def broadcast(MessageToPrint, connections):
     for clients in client_list:
         if clients!=connections:
             try:
-                clients.send(mess)
+                clients.send(MessageToPrint)
             except:
                 clients.close()
                 remove(clients)
