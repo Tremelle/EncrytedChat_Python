@@ -18,7 +18,7 @@ server.connect((args.servername, 9999))
 while True:
     sockets_list = [sys.stdin, server]
     read_sockets, write_socket, error_socket = select.select(sockets_list, [], [])
-    proto_copy = basicIMIO_pb2.BasicIMIO()
+    proto_copy = basicIMIO_pb2.BasicIM()
 
     for socks in read_sockets:
         if socks == server:
