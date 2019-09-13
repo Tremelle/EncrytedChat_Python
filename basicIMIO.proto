@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+message BasicIMIO {
+    required string nickname = 1;
+    required string wrote = 2;
+}
