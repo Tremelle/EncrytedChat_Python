@@ -53,18 +53,18 @@ def clientthread (connections, addr):
                 else:
                     remove(connections)
 
-def broadcast(MessageToPrint, connections):
-    for clients in client_list:
-        if clients!=connections:
-            try:
-                clients.send(MessageToPrint)
-            except:
-                clients.close()
-                remove(clients)
+    def broadcast(MessageToPrint, connections):
+        for clients in client_list:
+            if clients!=connections:
+                try:
+                    clients.send(MessageToPrint)
+                except:
+                    clients.close()
+                    remove(clients)
 
-def remove(connections):
-    if connections in client_list:
-        client_list.remove(connections)
+    def remove(connections):
+        if connections in client_list:
+            client_list.remove(connections)
 
 while True:
         connections, addr = server.accept()
